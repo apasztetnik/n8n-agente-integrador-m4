@@ -1,0 +1,354 @@
+{
+  "name": "W2 · Solicitud de cambio",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2da88021-a5a5-450c-bf6c-05701f9a4131",
+              "name": "status",
+              "value": "incompleto",
+              "type": "string"
+            },
+            {
+              "id": "47f996e4-99c4-4a3e-8d31-8c0f0a5ea281",
+              "name": "respuesta",
+              "value": "Para registrar la solicitud necesito tres datos: el finding (ID o nombre), qué querés cambiar (estado, nivel o responsable) y el nuevo valor.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1792,
+        -144
+      ],
+      "id": "467e3c07-4021-48eb-bcad-69397d52a0cf",
+      "name": "Pedir datos faltantes"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "1578e007-c43d-4811-86ca-da43e2ed9097",
+              "leftValue": "={{ $json.finding_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "e9a1ca04-fbd0-424e-a875-195833c8ed9b",
+              "leftValue": "={{ $json.campo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ed97c0c3-c96d-44ea-a210-5c623062d53b",
+              "leftValue": "={{ $json.valor_nuevo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1344,
+        -304
+      ],
+      "id": "50903163-68db-425c-b611-178be24b389d",
+      "name": "¿Datos completos?"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "14JuNb9b8C4Q01iWtwjlz_SSUFYDMkYaTQNsBwxjTpqE",
+          "mode": "list",
+          "cachedResultName": "ECS 1.10 - User Testing Findings",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14JuNb9b8C4Q01iWtwjlz_SSUFYDMkYaTQNsBwxjTpqE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 172617011,
+          "mode": "list",
+          "cachedResultName": "Solicitudes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14JuNb9b8C4Q01iWtwjlz_SSUFYDMkYaTQNsBwxjTpqE/edit#gid=172617011"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "=UXF-{{ $execution.id }}",
+            "fecha": "={{ $now.setZone('Europe/Madrid').toFormat('dd/MM/yyyy HH:mm') }}",
+            "version": "={{ $json.version }}",
+            "finding_id": "={{ $json.finding_id }}",
+            "campo": "={{ $json.campo }}",
+            "valor_nuevo": "={{ $json.valor_nuevo }}",
+            "motivo": "={{ $json.motivo }}",
+            "estado": "pendiente"
+          },
+          "matchingColumns": [
+            "request_id"
+          ],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fecha",
+              "displayName": "fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "version",
+              "displayName": "version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "finding_id",
+              "displayName": "finding_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "campo",
+              "displayName": "campo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor_nuevo",
+              "displayName": "valor_nuevo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo",
+              "displayName": "motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1568,
+        -448
+      ],
+      "id": "bb9a99de-3cbc-41d6-a308-8a9398ee6e95",
+      "name": "Registrar solicitud",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dYmpRwzsu7nuUZfT",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"chatInput\": \"user message\",\n  \"version\": \"1.10.0\",\n  \"finding_id\": \"12\",\n  \"campo\": \"estado\",\n  \"valor_nuevo\": \"cerrado\",\n  \"motivo\": \"motivo del cambio\"\n}"
+      },
+      "id": "f948d27f-8602-41ec-ba5c-0a2035fa183a",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        1136,
+        -304
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef666f7c-4139-4b9e-a31f-f72f9d4ca8f0",
+              "name": "status",
+              "value": "success",
+              "type": "string"
+            },
+            {
+              "id": "9dd69631-4a8e-4682-9719-a2f2b6ae61a5",
+              "name": "respuesta",
+              "value": "=Registré tu solicitud {{ $json.request_id }}: cambiar {{ $json.campo }} del finding {{ $json.finding_id }} a \"{{ $json.valor_nuevo }}\". Queda pendiente de revisión.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1776,
+        -592
+      ],
+      "id": "7bf71117-9f2d-4128-a5c1-1e99a256627f",
+      "name": "Salida W2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d352dc7f-4374-4611-bebb-f6acec1d0533",
+              "name": "status",
+              "value": "error",
+              "type": "string"
+            },
+            {
+              "id": "1c2158e7-82a6-437d-88f6-5d774f2f53ce",
+              "name": "respuesta",
+              "value": "No pude registrar la solicitud. Intentá de nuevo más tarde o avisá al equipo de UX.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1792,
+        -352
+      ],
+      "id": "6b935e9c-5f4a-499d-9d7b-105119795fb0",
+      "name": "Error W2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "¿Datos completos?": {
+      "main": [
+        [
+          {
+            "node": "Registrar solicitud",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pedir datos faltantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "¿Datos completos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar solicitud": {
+      "main": [
+        [
+          {
+            "node": "Salida W2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error W2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 60
+  },
+  "versionId": "029879f7-16f5-4349-9d98-0bff16824651",
+  "meta": {
+    "instanceId": "f4330ef9fa9731bde7962ff7b40874cffe4036127ef7259bb8211e52f6e5d448"
+  },
+  "nodeGroups": [],
+  "id": "hCfSZj2A4iBw1ezR",
+  "tags": []
+}

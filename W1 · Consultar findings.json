@@ -1,0 +1,283 @@
+{
+  "name": "W1 · Consultar findings",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1392,
+        -208
+      ],
+      "id": "ef054e50-f08a-480a-bb26-fb04c638265f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-5-5",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 5.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.6,
+      "position": [
+        1200,
+        -208
+      ],
+      "id": "3831f708-218f-4ab9-b6f6-4891ade2254c",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "O4BCyAj7IMpC0nf8",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Consulta en modo solo lectura la planilla de findings de user testing. Cada pestaña corresponde a una versión del producto: \"1.10.0\" (con datos) y \"1.11.0\" (nueva, puede estar vacía). Devuelve todas las filas de la pestaña indicada.\n\nColumnas y para qué sirve cada una:\n- Action: nombre del finding (la tarea del usuario). Usala para identificarlo.\n- Finding Title e Issue Description: qué falló y su detalle.\n- Recommendation: la solución propuesta.\n- Usability Heuristic: la heurística de Nielsen afectada.\n- Status (Pending, In Review, Resolved, Not applicable) y Level (Level 2 es el más grave, luego Level 1 y Remark): para filtrar.\n- Module y Sub-module: área del producto.\n- Finding # y Jira ID: solo si los piden.\n\nUsala cuando el usuario pregunte por findings: estado, severidad, módulo, cantidad, descripción, recomendación, heurística o ticket asociado.\n\nNo la uses para saludos, preguntas generales ni consultas que pidan cambiar o decidir algo, porque esas se escalan sin consultar la planilla.\n\nSi no indican versión, consultá 1.10.0.",
+        "documentId": {
+          "__rl": true,
+          "value": "14JuNb9b8C4Q01iWtwjlz_SSUFYDMkYaTQNsBwxjTpqE",
+          "mode": "list",
+          "cachedResultName": "ECS 1.10 - User Testing Findings",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14JuNb9b8C4Q01iWtwjlz_SSUFYDMkYaTQNsBwxjTpqE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sheet', `Nombre exacto de la pestaña de la versión, por ejemplo 1.10.0 o 1.11.0.`, 'string') }}",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1632,
+        -208
+      ],
+      "id": "c349383b-fe43-40c1-aebb-44acb9165eaf",
+      "name": "Consultar findings",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dYmpRwzsu7nuUZfT",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \"respuesta\": \"Texto de la respuesta\" }"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1856,
+        -208
+      ],
+      "id": "e20348a3-0c04-4335-824e-82b1869d3fed",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Instrucción del usuario: {{ $('Start').item.json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# ROL\nSos el Asistente de UX Findings del equipo de diseño. Respondés consultas sobre los hallazgos de las sesiones de user testing registrados en la planilla de findings.\n\n# ÁMBITO\nSolo respondés sobre los findings de la planilla. No tenés autorización para:\n- Crear, modificar, cerrar ni borrar findings.\n- Cambiar estados, niveles de severidad ni ningún otro dato.\n- Tomar decisiones de release, priorización o postergación.\n- Responder temas ajenos a los findings.\n\n# OBJETIVO\nDar respuestas breves y precisas, de no más de 500 caracteres, basadas exclusivamente en los datos de la planilla, para que el equipo entienda rápido el estado de los findings.\nRespondé en español. Mantené en su idioma original los nombres de módulos, estados, niveles y títulos de findings.\n\n# REGLAS DE USO DE HERRAMIENTAS\n- Consultá siempre la planilla antes de responder sobre findings, aunque el dato aparezca en la conversación previa: los datos pueden haber cambiado.\n- Si no indican la versión, consultá 1.10.0.\n- Si el dato no está en la planilla, decilo. Nunca inventes findings, estados ni recomendaciones.\n- Identificá cada finding por su Action (por ejemplo, \"Add a user\"). No uses el Finding # ni el Jira ID, salvo que te los pidan.\n- Si piden más detalle sobre un finding, usá Finding Title e Issue Description.\n- Si piden recomendaciones, usá Recommendation.\n- Si preguntan por la heurística, usá Usability Heuristic.\n\n# FORMATO DE SALIDA\nRespondé siempre con un JSON con un solo campo:\n- \"respuesta\": el texto para el usuario.",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1440,
+        -528
+      ],
+      "id": "c818cca6-1567-4d19-a361-4d34bb718b80",
+      "name": "Asistente UX Findings",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "chatInput",
+              "type": "any"
+            },
+            {
+              "name": "sessionId"
+            }
+          ]
+        }
+      },
+      "id": "e1a2813c-293c-4f41-9da0-144c157172e7",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        1232,
+        -528
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efd89193-80d9-4bd4-9aeb-6468647914c2",
+              "name": "status",
+              "value": "error",
+              "type": "string"
+            },
+            {
+              "id": "1ef7fcd4-dfb4-48b1-9859-0741ef3a71c4",
+              "name": "respuesta",
+              "value": "No pude consultar los findings en este momento. Intentá de nuevo en unos minutos.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1856,
+        -400
+      ],
+      "id": "7b656b78-75a2-48f7-842e-b008ec3b50a6",
+      "name": "Error W1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "07d76801-f015-4256-8873-14aebe29bb26",
+              "name": "status",
+              "value": "success",
+              "type": "string"
+            },
+            {
+              "id": "ab758473-d745-4aaa-aa46-e6139a4e22e1",
+              "name": "respuesta",
+              "value": "={{ $json.output.respuesta }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1856,
+        -672
+      ],
+      "id": "5eb71d20-5a65-4a0d-b0ac-7ab0716a9f1c",
+      "name": "Salida W1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Asistente UX Findings",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Asistente UX Findings",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar findings": {
+      "ai_tool": [
+        [
+          {
+            "node": "Asistente UX Findings",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Asistente UX Findings",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Asistente UX Findings": {
+      "main": [
+        [
+          {
+            "node": "Salida W1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error W1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Asistente UX Findings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 60
+  },
+  "versionId": "b6844348-2a94-4b9e-833b-6f416cd2af92",
+  "meta": {
+    "instanceId": "f4330ef9fa9731bde7962ff7b40874cffe4036127ef7259bb8211e52f6e5d448"
+  },
+  "nodeGroups": [],
+  "id": "iV7nmbMv4rBlRx0o",
+  "tags": []
+}
